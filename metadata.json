@@ -1,0 +1,6 @@
+{
+  "name": "Tahoe Studio Pro",
+  "description": "Mac-native creative studio operations suite for managing clients, employees, multi-assignee project timelines, deliverables, fixed budgets, expenses, and automated milestone billing reports.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
