@@ -15,6 +15,7 @@ import {
 } from 'lucide-react';
 import { BillingReport, Project, Client, Milestone, StudioConfig } from '../types';
 import { db } from '../services/db';
+import { formatCurrency } from '../utils/currency';
 
 interface BillingReportsViewProps {
   billingReports: BillingReport[];
@@ -143,7 +144,7 @@ export const BillingReportsView: React.FC<BillingReportsViewProps> = ({
               >
                 {projects.map((p) => (
                   <option key={p.id} value={p.id}>
-                    {p.title} (Budget: ${p.fixedBudget.toLocaleString()})
+                    {p.title} (Project Rate: {formatCurrency(p.fixedBudget)})
                   </option>
                 ))}
               </select>
@@ -162,7 +163,7 @@ export const BillingReportsView: React.FC<BillingReportsViewProps> = ({
                 <option value="">-- Choose Milestone --</option>
                 {availableMilestones.map((m) => (
                   <option key={m.id} value={m.id}>
-                    {m.title} ({m.percentage}% · ${m.amount.toLocaleString()}) [{m.status}]
+                    {m.title} ({m.percentage}% · {formatCurrency(m.amount)}) [{m.status}]
                   </option>
                 ))}
               </select>
@@ -185,7 +186,7 @@ export const BillingReportsView: React.FC<BillingReportsViewProps> = ({
         <div className="rounded-xl border border-slate-800 bg-slate-900/70 p-5 backdrop-blur-sm">
           <div className="text-xs text-slate-400">Total Billed via Milestones</div>
           <div className="mt-2 text-2xl font-bold font-mono text-slate-100 tabular-nums">
-            ${totalInvoiced.toLocaleString()}
+            {formatCurrency(totalInvoiced)}
           </div>
           <div className="mt-1 text-xs text-slate-400">Across {billingReports.length} statements</div>
         </div>
@@ -193,7 +194,7 @@ export const BillingReportsView: React.FC<BillingReportsViewProps> = ({
         <div className="rounded-xl border border-slate-800 bg-slate-900/70 p-5 backdrop-blur-sm">
           <div className="text-xs text-slate-400">Total Collected & Cleared</div>
           <div className="mt-2 text-2xl font-bold font-mono text-emerald-400 tabular-nums">
-            ${totalPaid.toLocaleString()}
+            {formatCurrency(totalPaid)}
           </div>
           <div className="mt-1 text-xs text-slate-400">Direct wire & ACH deposits</div>
         </div>
@@ -201,7 +202,7 @@ export const BillingReportsView: React.FC<BillingReportsViewProps> = ({
         <div className="rounded-xl border border-slate-800 bg-slate-900/70 p-5 backdrop-blur-sm">
           <div className="text-xs text-slate-400">Outstanding Receivables</div>
           <div className="mt-2 text-2xl font-bold font-mono text-amber-400 tabular-nums">
-            ${totalOutstanding.toLocaleString()}
+            {formatCurrency(totalOutstanding)}
           </div>
           <div className="mt-1 text-xs text-slate-400">Awaiting client payment</div>
         </div>
@@ -288,7 +289,7 @@ export const BillingReportsView: React.FC<BillingReportsViewProps> = ({
                     </span>
                   </td>
                   <td className="py-3.5 px-4 text-right font-mono font-semibold text-slate-100 tabular-nums">
-                    ${rep.totalAmount.toLocaleString()}
+                    {formatCurrency(rep.totalAmount)}
                   </td>
                   <td className="py-3.5 px-4 text-center" onClick={(e) => e.stopPropagation()}>
                     <div className="flex items-center justify-center gap-1">

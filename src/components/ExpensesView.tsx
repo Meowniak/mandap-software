@@ -14,6 +14,7 @@ import {
 } from 'lucide-react';
 import { Project, Employee, Expense, ExpenseCategory } from '../types';
 import { db } from '../services/db';
+import { formatCurrency } from '../utils/currency';
 
 interface ExpensesViewProps {
   projects: Project[];
@@ -109,7 +110,7 @@ export const ExpensesView: React.FC<ExpensesViewProps> = ({
         <div className="rounded-xl border border-slate-800 bg-slate-900/70 p-5 backdrop-blur-sm">
           <div className="text-xs text-slate-400">Total Fixed Contract Portfolio</div>
           <div className="mt-2 text-2xl font-bold font-mono text-slate-100 tabular-nums">
-            ${totalFixedBudget.toLocaleString()}
+            {formatCurrency(totalFixedBudget)}
           </div>
           <div className="mt-1 text-xs text-slate-400">
             Combined contracted client fees
@@ -119,7 +120,7 @@ export const ExpensesView: React.FC<ExpensesViewProps> = ({
         <div className="rounded-xl border border-slate-800 bg-slate-900/70 p-5 backdrop-blur-sm">
           <div className="text-xs text-slate-400">Total Actual Production Expenses</div>
           <div className="mt-2 text-2xl font-bold font-mono text-amber-400 tabular-nums">
-            ${totalExpensesLogged.toLocaleString()}
+            {formatCurrency(totalExpensesLogged)}
           </div>
           <div className="mt-1 text-xs text-slate-400">
             Gear rentals, lab prints, flights, stipends
@@ -129,7 +130,7 @@ export const ExpensesView: React.FC<ExpensesViewProps> = ({
         <div className="rounded-xl border border-slate-800 bg-slate-900/70 p-5 backdrop-blur-sm">
           <div className="text-xs text-slate-400">Net Studio Production Margin</div>
           <div className="mt-2 text-2xl font-bold font-mono text-emerald-400 tabular-nums">
-            ${netMargin.toLocaleString()}
+            {formatCurrency(netMargin)}
           </div>
           <div className="mt-1 text-xs text-slate-400">
             {totalFixedBudget > 0 ? ((netMargin / totalFixedBudget) * 100).toFixed(1) : 0}% Gross Profit
@@ -149,7 +150,7 @@ export const ExpensesView: React.FC<ExpensesViewProps> = ({
               <div key={cat} className="rounded-lg bg-slate-950/80 p-3 border border-slate-800/80">
                 <div className="text-[11px] text-slate-400 truncate">{cat}</div>
                 <div className="mt-1 font-mono font-bold text-slate-200 tabular-nums">
-                  ${amount.toLocaleString()}
+                  {formatCurrency(amount)}
                 </div>
               </div>
             );
@@ -251,7 +252,7 @@ export const ExpensesView: React.FC<ExpensesViewProps> = ({
                     </button>
                   </td>
                   <td className="py-3 px-4 text-right font-mono font-semibold text-amber-300 tabular-nums">
-                    ${exp.amount.toLocaleString()}
+                    {formatCurrency(exp.amount)}
                   </td>
                   <td className="py-3 px-4 text-center">
                     <button

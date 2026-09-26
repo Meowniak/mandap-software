@@ -9,18 +9,29 @@ export type EmployeeRole =
 
 export type EmployeeStatus = 'available' | 'on_assignment' | 'on_leave';
 
+export interface EmployeeSubEventRate {
+  subEventId: string;
+  subEventName: string;
+  category: ProjectCategory;
+  rate: number; // in NPR
+  customRole?: string; // specific role definition for this sub-event
+}
+
 export interface Employee {
   id: string;
   name: string;
   role: EmployeeRole;
   email: string;
   phone: string;
-  hourlyRate: number;
+  projectRate: number; // Default overall baseline rate in NPR / Rs.
+  hourlyRate?: number; // Legacy backwards-compatibility
   skills: string[];
   status: EmployeeStatus;
   avatarColor: string;
   joinedDate: string;
   notes?: string;
+  associatedCategories?: ProjectCategory[]; // Main events associated with (Wedding, Corporate, etc.)
+  subEventRates?: EmployeeSubEventRate[]; // Sub-event assignments with rates & role definitions
 }
 
 export interface Client {
@@ -118,6 +129,13 @@ export type ProjectCategory =
   | 'Editorial & Fashion'
   | 'Event & Gala';
 
+export interface ProjectEmployeeSubEventAssignment {
+  subEventId: string;
+  subEventName: string;
+  role: string;
+  rate: number; // in NPR
+}
+
 export interface Project {
   id: string;
   clientId: string;
@@ -126,9 +144,12 @@ export interface Project {
   status: ProjectStatus;
   startDate: string;
   endDate: string;
-  fixedBudget: number; // Contracted Fixed Total Budget
+  fixedBudget: number; // Contracted Total Project Rate in NPR
+  selectedSubEventIds?: string[]; // Sub-events included in this project
   assignedEmployeeIds: string[]; // Multiple employees per project
   employeeProjectRoles?: Record<string, string>; // employeeId -> specific assignment role title
+  employeeProjectRates?: Record<string, number>; // employeeId -> total assigned payment amount for this project in NPR
+  employeeSubEventAssignments?: Record<string, ProjectEmployeeSubEventAssignment[]>; // employeeId -> breakdown of assigned sub-events and rates
   progress: number; // 0 - 100
   deliverables: Deliverable[];
   milestones: Milestone[];
@@ -160,8 +181,8 @@ export interface BillingReport {
   status: BillingReportStatus;
   items: BillingReportLineItem[];
   subtotal: number;
-  taxRate: number; // e.g. 0.08 for 8%
-  taxAmount: number;
+  taxRate?: number; // 0 - tax removed
+  taxAmount?: number; // 0 - tax removed
   totalAmount: number;
   paidAmount: number;
   notes?: string;
@@ -180,8 +201,9 @@ export interface StudioConfig {
   email: string;
   phone: string;
   address: string;
-  currency: string;
-  taxRate: number;
+  currency: string; // 'NPR'
+  currencySymbol: string; // 'Rs.' or 'रू'
+  taxRate?: number; // 0 - tax removed
   bankDetails: {
     accountName: string;
     bankName: string;

@@ -17,6 +17,7 @@ import {
 } from 'lucide-react';
 import { Employee, Project, EmployeeRole } from '../types';
 import { db } from '../services/db';
+import { formatCurrency } from '../utils/currency';
 import { EmployeeFormModal } from './EmployeeFormModal';
 
 interface EmployeesViewProps {
@@ -203,8 +204,8 @@ export const EmployeesView: React.FC<EmployeesViewProps> = ({
                     <span className="capitalize">{emp.status.replace(/_/g, ' ')}</span>
                   </div>
 
-                  <div className="font-mono text-slate-200 font-semibold tabular-nums">
-                    ${emp.hourlyRate} <span className="text-[10px] text-slate-500 font-normal">/ hr</span>
+                  <div className="font-mono text-emerald-400 font-semibold tabular-nums text-xs">
+                    {formatCurrency(emp.projectRate ?? (emp.hourlyRate ? emp.hourlyRate * 100 : 0))} <span className="text-[10px] text-slate-500 font-normal">/ project</span>
                   </div>
                 </div>
 

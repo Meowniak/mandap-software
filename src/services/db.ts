@@ -13,17 +13,18 @@ import {
 const STORAGE_KEY = 'tahoe_studio_db_v1';
 
 export const DEFAULT_CONFIG: StudioConfig = {
-  studioName: 'Tahoe Visual Works',
-  tagline: 'High-Fidelity Cinema & Fine Art Editorial Media',
-  email: 'operations@tahoevisualworks.com',
-  phone: '+1 (530) 882-9400',
-  address: '400 Tahoe Pines Way, Suite 4B, Lake Tahoe, CA 96150',
-  currency: 'USD',
-  taxRate: 0.075,
+  studioName: 'Mandap Visuals',
+  tagline: 'High-Fidelity Cinema, Wedding & Fine Art Media',
+  email: 'operations@mandapvisuals.com',
+  phone: '+977 9801122330',
+  address: 'Kathmandu, Nepal',
+  currency: 'NPR',
+  currencySymbol: 'Rs.',
+  taxRate: 0,
   bankDetails: {
-    accountName: 'Tahoe Visual Works LLC',
-    bankName: 'First Republic / Silicon Valley Private Bank',
-    routingOrSwift: '121000358',
+    accountName: 'Mandap Visuals Pvt. Ltd.',
+    bankName: 'Nabil Bank / Global IME Bank',
+    routingOrSwift: 'NABILNPKA',
     accountNumber: '••••••••8912',
   },
 };
@@ -33,9 +34,9 @@ export const INITIAL_EMPLOYEES: Employee[] = [
     id: 'emp-1',
     name: 'Julian Vance',
     role: 'Lead Photographer',
-    email: 'julian@tahoestudio.com',
-    phone: '+1 (530) 412-8821',
-    hourlyRate: 145,
+    email: 'julian@mandapstudio.com',
+    phone: '+977 9801122331',
+    projectRate: 20000,
     skills: ['Hasselblad X2D', 'Leica M11', 'Medium Format Stills', 'Natural Light Framing'],
     status: 'on_assignment',
     avatarColor: '#6366f1',
@@ -46,9 +47,9 @@ export const INITIAL_EMPLOYEES: Employee[] = [
     id: 'emp-2',
     name: 'Maya Chen',
     role: 'Cinematographer',
-    email: 'maya@tahoestudio.com',
-    phone: '+1 (530) 412-8835',
-    hourlyRate: 160,
+    email: 'maya@mandapstudio.com',
+    phone: '+977 9801122332',
+    projectRate: 15000,
     skills: ['RED V-Raptor 8K', 'Sony FX6', 'Gimbal Stabilization', 'Anamorphic Glass'],
     status: 'on_assignment',
     avatarColor: '#06b6d4',
@@ -59,9 +60,9 @@ export const INITIAL_EMPLOYEES: Employee[] = [
     id: 'emp-3',
     name: 'Liam O’Connor',
     role: 'Colorist & Video Editor',
-    email: 'liam@tahoestudio.com',
-    phone: '+1 (530) 412-8849',
-    hourlyRate: 120,
+    email: 'liam@mandapstudio.com',
+    phone: '+977 9801122333',
+    projectRate: 12000,
     skills: ['DaVinci Resolve Studio', 'ACES Workflow', 'Grain Synthesis', 'Audio Ducking'],
     status: 'available',
     avatarColor: '#10b981',
@@ -72,9 +73,9 @@ export const INITIAL_EMPLOYEES: Employee[] = [
     id: 'emp-4',
     name: 'Elena Rostova',
     role: 'Photobook & Album Designer',
-    email: 'elena@tahoestudio.com',
-    phone: '+1 (530) 412-8862',
-    hourlyRate: 110,
+    email: 'elena@mandapstudio.com',
+    phone: '+977 9801122334',
+    projectRate: 10000,
     skills: ['Adobe InDesign', 'Editorial Typography', 'Italian Binding Specs', 'Foil Stamping'],
     status: 'on_assignment',
     avatarColor: '#ec4899',
@@ -85,9 +86,9 @@ export const INITIAL_EMPLOYEES: Employee[] = [
     id: 'emp-5',
     name: 'Devin Kumar',
     role: 'Drone Pilot & Aerial',
-    email: 'devin@tahoestudio.com',
-    phone: '+1 (530) 412-8874',
-    hourlyRate: 135,
+    email: 'devin@mandapstudio.com',
+    phone: '+977 9801122335',
+    projectRate: 12000,
     skills: ['Part 107 Licensed', 'DJI Inspire 3 (8K CinemaDNG)', 'Mountain Terrain Flight', 'FPV Pro'],
     status: 'available',
     avatarColor: '#f59e0b',
@@ -98,9 +99,9 @@ export const INITIAL_EMPLOYEES: Employee[] = [
     id: 'emp-6',
     name: 'Chloe Dubois',
     role: 'Sound & Audio Engineer',
-    email: 'chloe@tahoestudio.com',
-    phone: '+1 (530) 412-8888',
-    hourlyRate: 105,
+    email: 'chloe@mandapstudio.com',
+    phone: '+977 9801122336',
+    projectRate: 8000,
     skills: ['Sound Devices 833', 'DPA Lavaliers', 'Ambience Foley', 'Dialogue Restoration'],
     status: 'available',
     avatarColor: '#8b5cf6',
@@ -157,7 +158,7 @@ export const INITIAL_PROJECTS: Project[] = [
     status: 'post_production',
     startDate: '2026-08-20',
     endDate: '2026-10-15',
-    fixedBudget: 28500,
+    fixedBudget: 85000,
     assignedEmployeeIds: ['emp-1', 'emp-2', 'emp-3', 'emp-4', 'emp-5'],
     employeeProjectRoles: {
       'emp-1': 'Lead Director & Still Stills Master',
@@ -165,6 +166,13 @@ export const INITIAL_PROJECTS: Project[] = [
       'emp-3': 'Lead Editor & Colorist',
       'emp-4': 'Fine Art Photobook Designer',
       'emp-5': 'Inspire 3 Aerial Pilot',
+    },
+    employeeProjectRates: {
+      'emp-1': 20000,
+      'emp-2': 15000,
+      'emp-3': 12000,
+      'emp-4': 10000,
+      'emp-5': 12000,
     },
     progress: 72,
     location: 'Vance Lakefront Estate, Emerald Bay, CA',
@@ -348,13 +356,19 @@ export const INITIAL_PROJECTS: Project[] = [
     status: 'production',
     startDate: '2026-09-01',
     endDate: '2026-11-05',
-    fixedBudget: 34000,
+    fixedBudget: 60000,
     assignedEmployeeIds: ['emp-2', 'emp-5', 'emp-6', 'emp-3'],
     employeeProjectRoles: {
       'emp-2': 'Director of Photography',
       'emp-5': 'Lead Aerial Coordinator',
       'emp-6': 'Production Sound Recordist',
       'emp-3': 'Lead VFX & Colorist',
+    },
+    employeeProjectRates: {
+      'emp-2': 18000,
+      'emp-5': 15000,
+      'emp-6': 8000,
+      'emp-3': 12000,
     },
     progress: 45,
     location: 'Reno Drone Test Range & SF Headquarters',
@@ -496,12 +510,15 @@ export const INITIAL_PROJECTS: Project[] = [
     status: 'pre_production',
     startDate: '2026-10-01',
     endDate: '2026-11-20',
-    fixedBudget: 19500,
-    assignedEmployeeIds: ['emp-1', 'emp-4', 'emp-3'],
+    fixedBudget: 50000,
+    assignedEmployeeIds: ['emp-1', 'emp-3'],
     employeeProjectRoles: {
-      'emp-1': 'Lead Architectural & Lifestyle Photographer',
-      'emp-4': 'Lobby Art & Photobook Lead',
-      'emp-3': 'Color Grading Specialist',
+      'emp-1': 'Lead Photographer',
+      'emp-3': 'Colorist & Video Editor',
+    },
+    employeeProjectRates: {
+      'emp-1': 20000,
+      'emp-3': 12000,
     },
     progress: 15,
     location: 'Incline Village Mountain Lodge, NV',
@@ -595,7 +612,7 @@ export const INITIAL_PROJECTS: Project[] = [
 export const INITIAL_BILLING_REPORTS: BillingReport[] = [
   {
     id: 'rep-1',
-    invoiceNumber: 'TAHOE-2026-081',
+    invoiceNumber: 'MANDAP-2026-081',
     projectId: 'proj-1',
     clientId: 'cli-1',
     milestoneId: 'ms-1',
@@ -606,24 +623,24 @@ export const INITIAL_BILLING_REPORTS: BillingReport[] = [
     items: [
       {
         id: 'item-1',
-        description: 'Contract Booking Reserve - 30% of Fixed Studio Contract ($28,500.00)',
+        description: 'Contract Booking Reserve - 30% of Project Rate (Rs. 85,000)',
         quantity: 1,
-        unitPrice: 8550,
-        total: 8550,
+        unitPrice: 25500,
+        total: 25500,
       },
     ],
-    subtotal: 8550,
-    taxRate: 0.075,
-    taxAmount: 641.25,
-    totalAmount: 9191.25,
-    paidAmount: 9191.25,
-    notes: 'Thank you for choosing Tahoe Visual Works. Retainer secured for Sterling Lakeside Estate Gala.',
+    subtotal: 25500,
+    taxRate: 0,
+    taxAmount: 0,
+    totalAmount: 25500,
+    paidAmount: 25500,
+    notes: 'Thank you for choosing Mandap Visuals. Booking retainer received.',
     bankDetails: DEFAULT_CONFIG.bankDetails,
     generatedAt: '2026-06-18T14:00:00Z',
   },
   {
     id: 'rep-2',
-    invoiceNumber: 'TAHOE-2026-094',
+    invoiceNumber: 'MANDAP-2026-094',
     projectId: 'proj-1',
     clientId: 'cli-1',
     milestoneId: 'ms-2',
@@ -634,10 +651,10 @@ export const INITIAL_BILLING_REPORTS: BillingReport[] = [
     items: [
       {
         id: 'item-2',
-        description: 'Shoot Wrap & Multi-Cam Ingestion - 35% of Fixed Contract ($28,500.00)',
+        description: 'Shoot Wrap & Multi-Cam Ingestion - 35% of Project Rate (Rs. 85,000)',
         quantity: 1,
-        unitPrice: 9975,
-        total: 9975,
+        unitPrice: 29750,
+        total: 29750,
       },
       {
         id: 'item-2b',
@@ -647,18 +664,18 @@ export const INITIAL_BILLING_REPORTS: BillingReport[] = [
         total: 0,
       },
     ],
-    subtotal: 9975,
-    taxRate: 0.075,
-    taxAmount: 748.13,
-    totalAmount: 10723.13,
-    paidAmount: 10723.13,
+    subtotal: 29750,
+    taxRate: 0,
+    taxAmount: 0,
+    totalAmount: 29750,
+    paidAmount: 29750,
     notes: 'Milestone 2 completed upon wrap of Emerald Bay on-site production.',
     bankDetails: DEFAULT_CONFIG.bankDetails,
     generatedAt: '2026-08-24T16:30:00Z',
   },
   {
     id: 'rep-3',
-    invoiceNumber: 'TAHOE-2026-102',
+    invoiceNumber: 'MANDAP-2026-102',
     projectId: 'proj-2',
     clientId: 'cli-2',
     milestoneId: 'ms-201',
@@ -669,24 +686,24 @@ export const INITIAL_BILLING_REPORTS: BillingReport[] = [
     items: [
       {
         id: 'item-3',
-        description: 'Keynote Campaign Initial Milestone - 25% of Fixed Contract ($34,000.00)',
+        description: 'Keynote Campaign Initial Milestone - 25% of Project Rate (Rs. 60,000)',
         quantity: 1,
-        unitPrice: 8500,
-        total: 8500,
+        unitPrice: 15000,
+        total: 15000,
       },
     ],
-    subtotal: 8500,
-    taxRate: 0.075,
-    taxAmount: 637.5,
-    totalAmount: 9137.5,
-    paidAmount: 9137.5,
-    notes: 'FAA flight waiver clearance approved for Reno corridor operations.',
+    subtotal: 15000,
+    taxRate: 0,
+    taxAmount: 0,
+    totalAmount: 15000,
+    paidAmount: 15000,
+    notes: 'Production flight clearances approved.',
     bankDetails: DEFAULT_CONFIG.bankDetails,
     generatedAt: '2026-09-04T10:00:00Z',
   },
   {
     id: 'rep-4',
-    invoiceNumber: 'TAHOE-2026-118',
+    invoiceNumber: 'MANDAP-2026-118',
     projectId: 'proj-3',
     clientId: 'cli-3',
     milestoneId: 'ms-301',
@@ -697,18 +714,18 @@ export const INITIAL_BILLING_REPORTS: BillingReport[] = [
     items: [
       {
         id: 'item-4',
-        description: 'Solace Resort Creative Deposit - 30% of Fixed Contract ($19,500.00)',
+        description: 'Solace Resort Creative Deposit - 30% of Project Rate (Rs. 50,000)',
         quantity: 1,
-        unitPrice: 5850,
-        total: 5850,
+        unitPrice: 15000,
+        total: 15000,
       },
     ],
-    subtotal: 5850,
-    taxRate: 0.075,
-    taxAmount: 438.75,
-    totalAmount: 6288.75,
-    paidAmount: 6288.75,
-    notes: 'Moodboard approved. Shoot dates reserved for October 1-4.',
+    subtotal: 15000,
+    taxRate: 0,
+    taxAmount: 0,
+    totalAmount: 15000,
+    paidAmount: 15000,
+    notes: 'Moodboard approved. Shoot dates reserved.',
     bankDetails: DEFAULT_CONFIG.bankDetails,
     generatedAt: '2026-09-23T11:20:00Z',
   },
@@ -728,6 +745,35 @@ class LocalDatabase {
       if (stored) {
         const parsed = JSON.parse(stored);
         if (parsed && parsed.projects && parsed.employees && parsed.clients) {
+          // Automatic migration to NPR and project-based rates
+          if (!parsed.config || parsed.config.currency === 'USD' || !parsed.config.currencySymbol) {
+            parsed.config = {
+              ...DEFAULT_CONFIG,
+              ...(parsed.config || {}),
+              currency: 'NPR',
+              currencySymbol: 'Rs.',
+              taxRate: 0,
+            };
+          }
+          if (parsed.employees) {
+            parsed.employees = parsed.employees.map((e: any) => ({
+              ...e,
+              projectRate: e.projectRate ?? (e.hourlyRate ? e.hourlyRate * 100 : 15000),
+            }));
+          }
+          if (parsed.projects) {
+            parsed.projects = parsed.projects.map((p: any) => {
+              if (!p.employeeProjectRates) {
+                const rates: Record<string, number> = {};
+                (p.assignedEmployeeIds || []).forEach((id: string) => {
+                  const emp = (parsed.employees || []).find((e: any) => e.id === id);
+                  rates[id] = emp?.projectRate ?? 15000;
+                });
+                p.employeeProjectRates = rates;
+              }
+              return p;
+            });
+          }
           return parsed;
         }
       }
@@ -911,7 +957,12 @@ class LocalDatabase {
   // --- MULTI-EMPLOYEE PROJECT ASSIGNMENT ---
   public assignEmployeesToProject(
     projectId: string,
-    assignments: { employeeId: string; roleOnProject?: string }[]
+    assignments: {
+      employeeId: string;
+      roleOnProject?: string;
+      assignedRate?: number;
+      subEventAssignments?: import('../types').ProjectEmployeeSubEventAssignment[];
+    }[]
   ): Project {
     const project = this.getProject(projectId);
     if (!project) throw new Error('Project not found');
@@ -920,17 +971,79 @@ class LocalDatabase {
     const employeeProjectRoles: Record<string, string> = {
       ...(project.employeeProjectRoles || {}),
     };
+    const employeeProjectRates: Record<string, number> = {
+      ...(project.employeeProjectRates || {}),
+    };
+    const employeeSubEventAssignments: Record<string, import('../types').ProjectEmployeeSubEventAssignment[]> = {
+      ...(project.employeeSubEventAssignments || {}),
+    };
 
     assignments.forEach((a) => {
       if (a.roleOnProject) {
         employeeProjectRoles[a.employeeId] = a.roleOnProject;
+      }
+      if (a.subEventAssignments) {
+        employeeSubEventAssignments[a.employeeId] = a.subEventAssignments;
+      }
+      if (a.assignedRate !== undefined) {
+        employeeProjectRates[a.employeeId] = a.assignedRate;
+      } else if (employeeProjectRates[a.employeeId] === undefined) {
+        const emp = this.getEmployee(a.employeeId);
+        if (emp && emp.projectRate !== undefined) {
+          employeeProjectRates[a.employeeId] = emp.projectRate;
+        }
       }
     });
 
     return this.updateProject(projectId, {
       assignedEmployeeIds,
       employeeProjectRoles,
+      employeeProjectRates,
+      employeeSubEventAssignments,
     });
+  }
+
+  public updateEmployeeSubEventAssignment(
+    projectId: string,
+    employeeId: string,
+    subEventAssignments: import('../types').ProjectEmployeeSubEventAssignment[]
+  ): Project {
+    const project = this.getProject(projectId);
+    if (!project) throw new Error('Project not found');
+
+    const totalRate = subEventAssignments.reduce((s, a) => s + (a.rate || 0), 0);
+    const roleSummary = subEventAssignments.map((a) => a.role).filter(Boolean).join(', ');
+
+    const employeeSubEventAssignments = {
+      ...(project.employeeSubEventAssignments || {}),
+      [employeeId]: subEventAssignments,
+    };
+    const employeeProjectRates = {
+      ...(project.employeeProjectRates || {}),
+      [employeeId]: totalRate,
+    };
+    const employeeProjectRoles = {
+      ...(project.employeeProjectRoles || {}),
+      [employeeId]: roleSummary || project.employeeProjectRoles?.[employeeId] || 'Production Crew',
+    };
+
+    return this.updateProject(projectId, {
+      employeeSubEventAssignments,
+      employeeProjectRates,
+      employeeProjectRoles,
+    });
+  }
+
+  public updateEmployeeProjectRate(projectId: string, employeeId: string, rate: number): Project {
+    const project = this.getProject(projectId);
+    if (!project) throw new Error('Project not found');
+
+    const employeeProjectRates: Record<string, number> = {
+      ...(project.employeeProjectRates || {}),
+      [employeeId]: Math.max(0, rate),
+    };
+
+    return this.updateProject(projectId, { employeeProjectRates });
   }
 
   // --- DELIVERABLES ---
@@ -1074,10 +1187,11 @@ class LocalDatabase {
         d.status === 'ready_for_press'
     );
 
+    const sym = this.db.config.currencySymbol || 'Rs.';
     const lineItems = [
       {
         id: `li-1`,
-        description: `Milestone Release: ${milestone.title} (${milestone.percentage}% of Fixed Contract Total $${project.fixedBudget.toLocaleString()})`,
+        description: `Milestone Release: ${milestone.title} (${milestone.percentage}% of Project Rate ${sym} ${project.fixedBudget.toLocaleString()})`,
         quantity: 1,
         unitPrice: milestone.amount,
         total: milestone.amount,
@@ -1097,12 +1211,12 @@ class LocalDatabase {
     }
 
     const subtotal = milestone.amount;
-    const taxRate = this.db.config.taxRate;
-    const taxAmount = Math.round(subtotal * taxRate * 100) / 100;
-    const totalAmount = Math.round((subtotal + taxAmount) * 100) / 100;
+    const taxRate = 0; // Tax removed
+    const taxAmount = 0;
+    const totalAmount = subtotal;
 
     const reportCount = this.db.billingReports.length + 1;
-    const invoiceNumber = `TAHOE-2026-${String(reportCount).padStart(3, '0')}`;
+    const invoiceNumber = `MANDAP-${now.getFullYear()}-${String(reportCount).padStart(3, '0')}`;
 
     const newReport: BillingReport = {
       id: `rep-${Date.now()}`,

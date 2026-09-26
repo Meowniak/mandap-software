@@ -17,6 +17,7 @@ import {
 } from 'lucide-react';
 import { Project, Employee, Client, ProjectStatus } from '../types';
 import { db } from '../services/db';
+import { formatCurrency } from '../utils/currency';
 
 interface ProjectsViewProps {
   projects: Project[];
@@ -209,15 +210,15 @@ export const ProjectsView: React.FC<ProjectsViewProps> = ({
                   {/* Financial Metrics Strip */}
                   <div className="mt-4 grid grid-cols-3 gap-2 rounded-lg border border-slate-800 bg-slate-950/60 p-2.5 text-center">
                     <div>
-                      <div className="text-[10px] text-slate-500 uppercase tracking-wider">Fixed Budget</div>
+                      <div className="text-[10px] text-slate-500 uppercase tracking-wider">Project Rate</div>
                       <div className="font-mono text-xs font-semibold text-slate-200 tabular-nums">
-                        ${project.fixedBudget.toLocaleString()}
+                        {formatCurrency(project.fixedBudget)}
                       </div>
                     </div>
                     <div>
                       <div className="text-[10px] text-slate-500 uppercase tracking-wider">Expenses</div>
                       <div className="font-mono text-xs font-semibold text-amber-400 tabular-nums">
-                        ${totalExp.toLocaleString()}
+                        {formatCurrency(totalExp)}
                       </div>
                     </div>
                     <div>
@@ -319,7 +320,7 @@ export const ProjectsView: React.FC<ProjectsViewProps> = ({
                 <th className="py-3 px-4">Status</th>
                 <th className="py-3 px-4">Timeline</th>
                 <th className="py-3 px-4">Assigned Crew</th>
-                <th className="py-3 px-4 text-right">Fixed Budget</th>
+                <th className="py-3 px-4 text-right">Project Rate</th>
                 <th className="py-3 px-4 text-right">Expenses</th>
                 <th className="py-3 px-4 text-center">Progress</th>
                 <th className="py-3 px-4 text-center">Actions</th>
@@ -365,10 +366,10 @@ export const ProjectsView: React.FC<ProjectsViewProps> = ({
                       </div>
                     </td>
                     <td className="py-3.5 px-4 text-right font-mono font-semibold text-slate-100 tabular-nums">
-                      ${p.fixedBudget.toLocaleString()}
+                      {formatCurrency(p.fixedBudget)}
                     </td>
                     <td className="py-3.5 px-4 text-right font-mono font-medium text-amber-400 tabular-nums">
-                      ${totalExp.toLocaleString()}
+                      {formatCurrency(totalExp)}
                     </td>
                     <td className="py-3.5 px-4 text-center font-mono text-slate-300">
                       {p.progress}%

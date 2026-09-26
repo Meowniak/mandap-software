@@ -3,6 +3,7 @@ import {
   X,
   Calendar,
   DollarSign,
+  Coins,
   Users2,
   PackageCheck,
   Receipt,
@@ -19,6 +20,7 @@ import {
   HardDrive,
   Edit2,
   Sparkles,
+  AlertTriangle,
 } from 'lucide-react';
 import {
   Project,
@@ -32,6 +34,7 @@ import {
   ExpenseCategory,
 } from '../types';
 import { db } from '../services/db';
+import { formatCurrency, getCurrencySymbol } from '../utils/currency';
 
 interface ProjectDetailModalProps {
   project: Project;
@@ -48,6 +51,7 @@ export const ProjectDetailModal: React.FC<ProjectDetailModalProps> = ({
   onClose,
   onOpenBillingReport,
 }) => {
+  const currencySymbol = getCurrencySymbol();
   const [activeTab, setActiveTab] = useState<'overview' | 'employees' | 'deliverables' | 'milestones' | 'expenses'>(
     'overview'
   );
@@ -56,6 +60,7 @@ export const ProjectDetailModal: React.FC<ProjectDetailModalProps> = ({
   const [showAddEmployee, setShowAddEmployee] = useState<boolean>(false);
   const [selectedEmpId, setSelectedEmpId] = useState<string>('');
   const [customRoleTitle, setCustomRoleTitle] = useState<string>('');
+  const [customRateInput, setCustomRateInput] = useState<string>('');
 
   const [showAddDeliverable, setShowAddDeliverable] = useState<boolean>(false);
   const [newDelType, setNewDelType] = useState<DeliverableType>('photobook');
@@ -76,14 +81,32 @@ export const ProjectDetailModal: React.FC<ProjectDetailModalProps> = ({
 
   const client = clients.find((c) => c.id === project.clientId);
 
+  // Financial calculations
   const totalExpenses = project.expenses.reduce((sum, e) => sum + e.amount, 0);
-  const remainingBudget = project.fixedBudget - totalExpenses;
+  const totalCrewPayouts = project.assignedEmployeeIds.reduce((sum, id) => {
+    const rate =
+      project.employeeProjectRates?.[id] ??
+      employees.find((e) => e.id === id)?.projectRate ??
+      0;
+    return sum + rate;
+  }, 0);
+  const netStudioMargin = project.fixedBudget - totalCrewPayouts - totalExpenses;
+  const netMarginPercent =
+    project.fixedBudget > 0 ? Math.round((netStudioMargin / project.fixedBudget) * 100) : 0;
   const budgetUtilization =
-    project.fixedBudget > 0 ? Math.round((totalExpenses / project.fixedBudget) * 100) : 0;
+    project.fixedBudget > 0 ? Math.round(((totalExpenses + totalCrewPayouts) / project.fixedBudget) * 100) : 0;
 
   const showToast = (msg: string) => {
     setNotification(msg);
     setTimeout(() => setNotification(null), 3000);
+  };
+
+  const handleSelectEmpToAssign = (empId: string) => {
+    setSelectedEmpId(empId);
+    const empObj = employees.find((e) => e.id === empId);
+    if (empObj) {
+      setCustomRateInput(String(empObj.projectRate ?? 15000));
+    }
   };
 
   // Assign employee to project
@@ -100,20 +123,23 @@ export const ProjectDetailModal: React.FC<ProjectDetailModalProps> = ({
     const currentAssignments = project.assignedEmployeeIds.map((id) => ({
       employeeId: id,
       roleOnProject: project.employeeProjectRoles?.[id],
+      assignedRate: project.employeeProjectRates?.[id],
     }));
 
     const empObj = employees.find((emp) => emp.id === selectedEmpId);
     const roleToAssign = customRoleTitle.trim() || empObj?.role || 'Production Crew';
+    const rateToAssign = parseFloat(customRateInput) || empObj?.projectRate || 0;
 
     db.assignEmployeesToProject(project.id, [
       ...currentAssignments,
-      { employeeId: selectedEmpId, roleOnProject: roleToAssign },
+      { employeeId: selectedEmpId, roleOnProject: roleToAssign, assignedRate: rateToAssign },
     ]);
 
     setSelectedEmpId('');
     setCustomRoleTitle('');
+    setCustomRateInput('');
     setShowAddEmployee(false);
-    showToast('Employee assigned to project');
+    showToast('Employee assigned to project with defined payout');
   };
 
   // Remove employee
@@ -121,10 +147,13 @@ export const ProjectDetailModal: React.FC<ProjectDetailModalProps> = ({
     const updatedIds = project.assignedEmployeeIds.filter((id) => id !== empId);
     const updatedRoles = { ...(project.employeeProjectRoles || {}) };
     delete updatedRoles[empId];
+    const updatedRates = { ...(project.employeeProjectRates || {}) };
+    delete updatedRates[empId];
 
     db.updateProject(project.id, {
       assignedEmployeeIds: updatedIds,
       employeeProjectRoles: updatedRoles,
+      employeeProjectRates: updatedRates,
     });
     showToast('Employee unassigned from project');
   };
@@ -136,6 +165,11 @@ export const ProjectDetailModal: React.FC<ProjectDetailModalProps> = ({
     db.updateProject(project.id, {
       employeeProjectRoles: updatedRoles,
     });
+  };
+
+  // Update employee project payout rate
+  const handleUpdateEmpProjectRate = (empId: string, rate: number) => {
+    db.updateEmployeeProjectRate(project.id, empId, rate);
   };
 
   // Add deliverable
@@ -252,7 +286,7 @@ export const ProjectDetailModal: React.FC<ProjectDetailModalProps> = ({
                 <span aria-hidden="true">·</span>
                 <span className="capitalize">{project.category}</span>
                 <span aria-hidden="true">·</span>
-                <span className="font-mono text-emerald-400">Fixed Budget: ${project.fixedBudget.toLocaleString()}</span>
+                <span className="font-mono text-emerald-400">Project Rate: {formatCurrency(project.fixedBudget)}</span>
               </div>
             </div>
           </div>
@@ -301,34 +335,48 @@ export const ProjectDetailModal: React.FC<ProjectDetailModalProps> = ({
           {activeTab === 'overview' && (
             <div className="space-y-6">
               {/* Financial & Timeline Banner */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                 <div className="rounded-xl border border-slate-800 bg-slate-950/60 p-4">
-                  <div className="text-xs text-slate-400">Fixed Contract Budget</div>
-                  <div className="mt-1 text-2xl font-bold font-mono text-slate-100 tabular-nums">
-                    ${project.fixedBudget.toLocaleString()}
+                  <div className="text-xs text-slate-400">Total Project Rate</div>
+                  <div className="mt-1 text-xl font-bold font-mono text-slate-100 tabular-nums">
+                    {formatCurrency(project.fixedBudget)}
                   </div>
                   <div className="mt-2 text-[11px] text-slate-500">
-                    Client contracted fixed fee
+                    Contracted project value
                   </div>
                 </div>
 
                 <div className="rounded-xl border border-slate-800 bg-slate-950/60 p-4">
-                  <div className="text-xs text-slate-400">Production Expenses Logged</div>
-                  <div className="mt-1 text-2xl font-bold font-mono text-amber-300 tabular-nums">
-                    ${totalExpenses.toLocaleString()}
+                  <div className="text-xs text-slate-400">Assigned Crew Payouts</div>
+                  <div className="mt-1 text-xl font-bold font-mono text-amber-400 tabular-nums">
+                    {formatCurrency(totalCrewPayouts)}
                   </div>
                   <div className="mt-2 text-[11px] text-slate-500 font-mono">
-                    {budgetUtilization}% of budget consumed
+                    {project.assignedEmployeeIds.length} crew members
                   </div>
                 </div>
 
                 <div className="rounded-xl border border-slate-800 bg-slate-950/60 p-4">
-                  <div className="text-xs text-slate-400">Projected Studio Net Margin</div>
-                  <div className="mt-1 text-2xl font-bold font-mono text-emerald-400 tabular-nums">
-                    ${remainingBudget.toLocaleString()}
+                  <div className="text-xs text-slate-400">Other Expenses Logged</div>
+                  <div className="mt-1 text-xl font-bold font-mono text-slate-300 tabular-nums">
+                    {formatCurrency(totalExpenses)}
+                  </div>
+                  <div className="mt-2 text-[11px] text-slate-500 font-mono">
+                    {project.expenses.length} receipts logged
+                  </div>
+                </div>
+
+                <div className="rounded-xl border border-slate-800 bg-slate-950/60 p-4">
+                  <div className="text-xs text-slate-400">Net Studio Margin</div>
+                  <div
+                    className={`mt-1 text-xl font-bold font-mono tabular-nums ${
+                      netStudioMargin >= 0 ? 'text-emerald-400' : 'text-rose-400'
+                    }`}
+                  >
+                    {formatCurrency(netStudioMargin)}
                   </div>
                   <div className="mt-2 text-[11px] text-slate-500">
-                    Remaining after production expenses
+                    {netMarginPercent}% net margin
                   </div>
                 </div>
               </div>
@@ -372,10 +420,10 @@ export const ProjectDetailModal: React.FC<ProjectDetailModalProps> = ({
               <div className="flex items-center justify-between">
                 <div>
                   <h4 className="text-sm font-semibold text-slate-100">
-                    Project Crew & Associated Employees
+                    Project Crew & Payouts Management
                   </h4>
                   <p className="text-xs text-slate-400">
-                    Multiple employees can be associated with this project with custom on-set / post roles
+                    Define custom roles and assigned project payouts for each team member
                   </p>
                 </div>
                 <button
@@ -387,21 +435,47 @@ export const ProjectDetailModal: React.FC<ProjectDetailModalProps> = ({
                 </button>
               </div>
 
+              {/* Top Live Crew Financial Strip */}
+              <div className="grid grid-cols-3 gap-3 rounded-xl border border-slate-800 bg-slate-950/80 p-3.5 text-center text-xs">
+                <div>
+                  <div className="text-[10px] text-slate-500 uppercase tracking-wider">Project Rate</div>
+                  <div className="mt-0.5 font-mono text-sm font-bold text-slate-100">
+                    {formatCurrency(project.fixedBudget)}
+                  </div>
+                </div>
+                <div>
+                  <div className="text-[10px] text-slate-500 uppercase tracking-wider">Total Crew Payouts</div>
+                  <div className="mt-0.5 font-mono text-sm font-bold text-amber-400">
+                    {formatCurrency(totalCrewPayouts)}
+                  </div>
+                </div>
+                <div>
+                  <div className="text-[10px] text-slate-500 uppercase tracking-wider">Studio Balance</div>
+                  <div
+                    className={`mt-0.5 font-mono text-sm font-bold ${
+                      project.fixedBudget - totalCrewPayouts >= 0 ? 'text-emerald-400' : 'text-rose-400'
+                    }`}
+                  >
+                    {formatCurrency(project.fixedBudget - totalCrewPayouts)}
+                  </div>
+                </div>
+              </div>
+
               {/* Add Employee Form Drawer */}
               {showAddEmployee && (
                 <form
                   onSubmit={handleAssignEmployee}
-                  className="rounded-xl border border-slate-700 bg-slate-950 p-4 space-y-4"
+                  className="rounded-xl border border-indigo-500/40 bg-slate-950 p-4 space-y-4 shadow-xl"
                 >
                   <h5 className="text-xs font-semibold text-slate-200">
                     Associate Team Member to {project.title}
                   </h5>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                     <div>
                       <label className="block text-[11px] text-slate-400 mb-1">Select Employee</label>
                       <select
                         value={selectedEmpId}
-                        onChange={(e) => setSelectedEmpId(e.target.value)}
+                        onChange={(e) => handleSelectEmpToAssign(e.target.value)}
                         required
                         className="w-full rounded-md border border-slate-700 bg-slate-900 px-3 py-1.5 text-xs text-slate-200 focus:border-indigo-500 focus:outline-none"
                       >
@@ -410,7 +484,7 @@ export const ProjectDetailModal: React.FC<ProjectDetailModalProps> = ({
                           .filter((emp) => !project.assignedEmployeeIds.includes(emp.id))
                           .map((emp) => (
                             <option key={emp.id} value={emp.id}>
-                              {emp.name} ({emp.role}) - ${emp.hourlyRate}/hr
+                              {emp.name} ({emp.role}) - Default: {currencySymbol} {(emp.projectRate ?? 15000).toLocaleString()}
                             </option>
                           ))}
                       </select>
@@ -418,14 +492,29 @@ export const ProjectDetailModal: React.FC<ProjectDetailModalProps> = ({
 
                     <div>
                       <label className="block text-[11px] text-slate-400 mb-1">
-                        Specific Role on this Project (Optional)
+                        Specific Role on this Project
                       </label>
                       <input
                         type="text"
-                        placeholder="e.g. Lead Director, Drone Operator, Colorist"
+                        placeholder="e.g. Lead Director, Drone Pilot"
                         value={customRoleTitle}
                         onChange={(e) => setCustomRoleTitle(e.target.value)}
                         className="w-full rounded-md border border-slate-700 bg-slate-900 px-3 py-1.5 text-xs text-slate-200 focus:border-indigo-500 focus:outline-none"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-[11px] text-slate-400 mb-1">
+                        Assigned Project Rate ({currencySymbol})
+                      </label>
+                      <input
+                        type="number"
+                        min="0"
+                        step="any"
+                        placeholder="e.g. 20000"
+                        value={customRateInput}
+                        onChange={(e) => setCustomRateInput(e.target.value)}
+                        className="w-full rounded-md border border-slate-700 bg-slate-900 px-3 py-1.5 text-xs font-mono font-semibold text-emerald-400 focus:border-indigo-500 focus:outline-none"
                       />
                     </div>
                   </div>
@@ -456,6 +545,8 @@ export const ProjectDetailModal: React.FC<ProjectDetailModalProps> = ({
 
                   const assignedRole =
                     project.employeeProjectRoles?.[emp.id] || emp.role;
+                  const assignedRate =
+                    project.employeeProjectRates?.[emp.id] ?? emp.projectRate ?? 0;
 
                   return (
                     <div
@@ -498,9 +589,32 @@ export const ProjectDetailModal: React.FC<ProjectDetailModalProps> = ({
                         />
                       </div>
 
+                      {/* Assigned Payment for this Project */}
+                      <div className="pt-2 border-t border-slate-800/80">
+                        <div className="flex items-center justify-between mb-1">
+                          <label className="text-[10px] text-slate-400 uppercase tracking-wider">
+                            Assigned Project Rate ({currencySymbol})
+                          </label>
+                          <span className="text-[10px] text-slate-500">Predefined: {currencySymbol} {(emp.projectRate ?? 0).toLocaleString()}</span>
+                        </div>
+                        <div className="flex items-center gap-1.5">
+                          <span className="text-xs text-slate-400 font-mono">{currencySymbol}</span>
+                          <input
+                            type="number"
+                            min="0"
+                            step="any"
+                            value={assignedRate}
+                            onChange={(e) =>
+                              handleUpdateEmpProjectRate(emp.id, parseFloat(e.target.value) || 0)
+                            }
+                            className="w-full rounded-md border border-slate-700 bg-slate-900 px-2.5 py-1 text-xs font-mono font-semibold text-emerald-400 focus:border-indigo-500 focus:outline-none"
+                          />
+                        </div>
+                      </div>
+
                       <div className="flex items-center justify-between text-[11px] text-slate-400 pt-1">
-                        <span>Base Rate: <span className="font-mono text-slate-200">${emp.hourlyRate}/hr</span></span>
-                        <span className="capitalize">{emp.status.replace(/_/g, ' ')}</span>
+                        <span className="text-slate-500">Status</span>
+                        <span className="capitalize text-slate-300">{emp.status.replace(/_/g, ' ')}</span>
                       </div>
                     </div>
                   );

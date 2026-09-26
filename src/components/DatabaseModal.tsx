@@ -37,8 +37,8 @@ export const DatabaseModal: React.FC<DatabaseModalProps> = ({ onClose }) => {
   const [email, setEmail] = useState(config.email);
   const [phone, setPhone] = useState(config.phone);
   const [address, setAddress] = useState(config.address);
-  const [currency, setCurrency] = useState(config.currency || 'USD');
-  const [taxRate, setTaxRate] = useState(String(config.taxRate * 100));
+  const [currency, setCurrency] = useState(config.currency || 'NPR');
+  const [currencySymbol, setCurrencySymbol] = useState(config.currencySymbol || 'Rs.');
   const [bankName, setBankName] = useState(config.bankDetails.bankName);
   const [accountName, setAccountName] = useState(config.bankDetails.accountName);
   const [routing, setRouting] = useState(config.bankDetails.routingOrSwift);
@@ -104,7 +104,6 @@ export const DatabaseModal: React.FC<DatabaseModalProps> = ({ onClose }) => {
 
   const handleSaveIdentity = (e: React.FormEvent) => {
     e.preventDefault();
-    const rateDecimal = parseFloat(taxRate) / 100 || 0.075;
 
     db.updateConfig({
       studioName,
@@ -112,8 +111,9 @@ export const DatabaseModal: React.FC<DatabaseModalProps> = ({ onClose }) => {
       email,
       phone,
       address,
-      currency,
-      taxRate: rateDecimal,
+      currency: currency.trim() || 'NPR',
+      currencySymbol: currencySymbol.trim() || 'Rs.',
+      taxRate: 0,
       bankDetails: {
         bankName,
         accountName,
@@ -122,7 +122,7 @@ export const DatabaseModal: React.FC<DatabaseModalProps> = ({ onClose }) => {
       },
     });
 
-    showSuccess('Studio identity, branding, and bank wire details updated!');
+    showSuccess('Studio identity, currency settings, and bank wire details updated!');
   };
 
   return (
@@ -340,7 +340,7 @@ export const DatabaseModal: React.FC<DatabaseModalProps> = ({ onClose }) => {
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-xs font-medium text-slate-300 mb-1">Email</label>
                   <input
@@ -360,18 +360,84 @@ export const DatabaseModal: React.FC<DatabaseModalProps> = ({ onClose }) => {
                     className="w-full rounded-md border border-slate-700 bg-slate-950 px-3.5 py-2 text-xs text-slate-100 focus:border-indigo-500 focus:outline-none"
                   />
                 </div>
+              </div>
 
-                <div>
-                  <label className="block text-xs font-medium text-slate-300 mb-1">
-                    Default Tax Rate (%)
-                  </label>
-                  <input
-                    type="number"
-                    step="0.1"
-                    value={taxRate}
-                    onChange={(e) => setTaxRate(e.target.value)}
-                    className="w-full rounded-md border border-slate-700 bg-slate-950 px-3.5 py-2 text-xs font-mono text-slate-100 focus:border-indigo-500 focus:outline-none"
-                  />
+              {/* Currency Configuration (Replaces Tax Rate & USD) */}
+              <div className="rounded-xl border border-indigo-500/20 bg-indigo-500/5 p-4 space-y-3">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h5 className="text-xs font-semibold text-indigo-300 uppercase tracking-wider">
+                      Currency & Local Unit Configuration
+                    </h5>
+                    <p className="text-[11px] text-slate-400">
+                      Configure your local currency sign and code. Used across all projects, employee payments, and invoices.
+                    </p>
+                  </div>
+                  <span className="rounded bg-indigo-500/20 px-2 py-0.5 font-mono text-[10px] text-indigo-300 font-bold">
+                    Tax Disabled (0%)
+                  </span>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1">
+                  <div>
+                    <label className="block text-[11px] font-medium text-slate-300 mb-1">
+                      Currency Code
+                    </label>
+                    <input
+                      type="text"
+                      value={currency}
+                      onChange={(e) => setCurrency(e.target.value.toUpperCase())}
+                      placeholder="e.g. NPR"
+                      className="w-full rounded-md border border-slate-700 bg-slate-950 px-3 py-1.5 text-xs font-mono text-slate-100 focus:border-indigo-500 focus:outline-none uppercase"
+                    />
+                    <div className="mt-1.5 flex items-center gap-1.5 text-[10px] text-slate-400">
+                      <span>Presets:</span>
+                      <button
+                        type="button"
+                        onClick={() => setCurrency('NPR')}
+                        className="rounded bg-slate-800 px-1.5 py-0.5 text-slate-300 hover:bg-slate-700"
+                      >
+                        NPR
+                      </button>
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-[11px] font-medium text-slate-300 mb-1">
+                      Local Currency Sign / Symbol
+                    </label>
+                    <input
+                      type="text"
+                      value={currencySymbol}
+                      onChange={(e) => setCurrencySymbol(e.target.value)}
+                      placeholder="e.g. Rs. or रू"
+                      className="w-full rounded-md border border-slate-700 bg-slate-950 px-3 py-1.5 text-xs font-mono text-slate-100 focus:border-indigo-500 focus:outline-none"
+                    />
+                    <div className="mt-1.5 flex items-center gap-1.5 text-[10px] text-slate-400">
+                      <span>Quick Select:</span>
+                      <button
+                        type="button"
+                        onClick={() => setCurrencySymbol('Rs.')}
+                        className={`rounded px-1.5 py-0.5 text-[10px] font-mono ${currencySymbol === 'Rs.' ? 'bg-indigo-600 text-white' : 'bg-slate-800 text-slate-300 hover:bg-slate-700'}`}
+                      >
+                        Rs.
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setCurrencySymbol('रू')}
+                        className={`rounded px-1.5 py-0.5 text-[10px] font-mono ${currencySymbol === 'रू' ? 'bg-indigo-600 text-white' : 'bg-slate-800 text-slate-300 hover:bg-slate-700'}`}
+                      >
+                        रू
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setCurrencySymbol('NPR')}
+                        className={`rounded px-1.5 py-0.5 text-[10px] font-mono ${currencySymbol === 'NPR' ? 'bg-indigo-600 text-white' : 'bg-slate-800 text-slate-300 hover:bg-slate-700'}`}
+                      >
+                        NPR
+                      </button>
+                    </div>
+                  </div>
                 </div>
               </div>
 

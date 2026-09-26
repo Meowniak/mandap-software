@@ -17,6 +17,7 @@ import {
   Filter,
 } from 'lucide-react';
 import { Project, Employee, Client, Deliverable } from '../types';
+import { formatCurrency } from '../utils/currency';
 
 interface DashboardViewProps {
   projects: Project[];
@@ -138,7 +139,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
             <FolderKanban className="h-4 w-4 text-indigo-400" />
           </div>
           <div className="mt-3 text-2xl font-bold font-mono tabular-nums text-slate-100">
-            ${totalFixedBudget.toLocaleString()}
+            {formatCurrency(totalFixedBudget)}
           </div>
           <div className="mt-2 flex items-center gap-1.5 text-xs text-slate-400">
             <span>Across {projects.length} signed production contracts</span>
@@ -152,7 +153,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
             <Receipt className="h-4 w-4 text-amber-400" />
           </div>
           <div className="mt-3 text-2xl font-bold font-mono tabular-nums text-amber-300">
-            ${totalExpenses.toLocaleString()}
+            {formatCurrency(totalExpenses)}
           </div>
           <div className="mt-2 flex items-center gap-1.5 text-xs text-slate-400">
             <span>Gear, travel, lab & fabrication</span>
@@ -166,7 +167,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
             <TrendingUp className="h-4 w-4 text-emerald-400" />
           </div>
           <div className="mt-3 text-2xl font-bold font-mono tabular-nums text-emerald-400">
-            ${netStudioMargin.toLocaleString()}
+            {formatCurrency(netStudioMargin)}
           </div>
           <div className="mt-2 flex items-center gap-1.5 text-xs text-slate-400">
             <span className="font-mono font-medium text-emerald-300">
@@ -275,7 +276,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                     {/* Fixed Budget vs Expenses */}
                     <div className="text-right">
                       <div className="font-mono font-medium text-slate-200 tabular-nums">
-                        ${projectExpensesSum.toLocaleString()} / ${project.fixedBudget.toLocaleString()}
+                        {formatCurrency(projectExpensesSum)} / {formatCurrency(project.fixedBudget)}
                       </div>
                       <div className="text-[11px] text-slate-400">
                         {budgetPercentUsed}% expense ratio
@@ -492,8 +493,8 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                         <div className="font-mono font-medium text-indigo-300 tabular-nums">
                           {assignedCount} {assignedCount === 1 ? 'project' : 'projects'}
                         </div>
-                        <div className="text-[10px] text-slate-500 font-mono">
-                          ${emp.hourlyRate}/hr
+                        <div className="text-[10px] text-emerald-400 font-mono">
+                          {formatCurrency(emp.projectRate ?? 15000)} / proj
                         </div>
                       </div>
                       <span

@@ -99,10 +99,10 @@ export const DocumentationModal: React.FC<DocumentationModalProps> = ({ onClose 
               <div className="rounded-xl border border-slate-800 bg-slate-950/60 p-4 space-y-2">
                 <div className="font-bold text-slate-200 flex items-center gap-2">
                   <span className="flex h-5 w-5 items-center justify-center rounded-full bg-indigo-600 text-white text-[10px] font-mono">2</span>
-                  <span>CRUD Employees & Production Crew</span>
+                  <span>Define Employees & Standard Project Rates</span>
                 </div>
                 <p className="text-slate-400">
-                  Go to <strong>Employees & Crew</strong> to manage photographers, cinematographers, drone pilots, album designers, colorists, and sound engineers. You can Add, Edit rates/skills, or Delete employees at any time.
+                  Go to <strong>Employees & Crew</strong> to manage photographers, cinematographers, drone pilots, album designers, colorists, and sound engineers. You define each team member's <strong>Standard Project Rate (in NPR / Rs.)</strong> instead of an hourly rate.
                 </p>
               </div>
 
@@ -110,10 +110,10 @@ export const DocumentationModal: React.FC<DocumentationModalProps> = ({ onClose 
               <div className="rounded-xl border border-slate-800 bg-slate-950/60 p-4 space-y-2">
                 <div className="font-bold text-slate-200 flex items-center gap-2">
                   <span className="flex h-5 w-5 items-center justify-center rounded-full bg-indigo-600 text-white text-[10px] font-mono">3</span>
-                  <span>Create Project, Set Fixed Budget & Assign Multiple Employees</span>
+                  <span>Create Project, Define Project Rate & Assign Crew with Automatic Payouts</span>
                 </div>
                 <p className="text-slate-400">
-                  Click <strong>"+ New Project"</strong>. Enter the contract title, select the client, production category (Wedding, Corporate Film, Commercial), date range, and the <strong>Fixed Contract Budget</strong>. Check off multiple crew members to associate with the project.
+                  Click <strong>"+ New Project"</strong>. Enter the project title, client, and <strong>Total Project Rate</strong> (e.g. 50,000). When you select crew members, the software prompts you to define their rates for this project (e.g. Employee 1: 20,000, Employee 2: 12,000). The system automatically computes total crew payouts and your studio margin in real time!
                 </p>
               </div>
 
@@ -224,31 +224,32 @@ export const DocumentationModal: React.FC<DocumentationModalProps> = ({ onClose 
               <div className="space-y-4">
                 <div className="rounded-xl border border-slate-800 bg-slate-950/60 p-4 space-y-2">
                   <h5 className="font-bold text-slate-200">
-                    1. Changing Studio Name ("Tahoe Visual Works") & Bank Details:
+                    1. Currency Settings (NPR, Rs., रू) & Studio Branding:
                   </h5>
                   <p className="text-slate-400">
-                    Open <code className="font-mono text-indigo-300">src/services/db.ts</code> around line 15:
+                    <strong>Where to change it in the app:</strong> Click <strong>Local DB &gt; Studio Identity & Settings</strong> in the top-right header or bottom sidebar. You can set the Currency Code (e.g. <code>NPR</code>) and Local Symbol (<code>Rs.</code> or <code>रू</code>) with 1 click. Tax is removed/disabled (0%).
+                  </p>
+                  <p className="text-slate-400 mt-2">
+                    <strong>In source code:</strong> Open <code className="font-mono text-indigo-300">src/services/db.ts</code> around line 15:
                   </p>
                   <pre className="rounded bg-slate-950 p-3 text-[11px] font-mono text-slate-300 overflow-x-auto border border-slate-800">
 {`export const DEFAULT_CONFIG: StudioConfig = {
-  studioName: 'YOUR STUDIO NAME HERE', // Change this
+  studioName: 'Mandap Visuals',
   tagline: 'High-Fidelity Cinema & Fine Art Editorial Media',
-  email: 'hello@yourstudio.com',
-  phone: '+1 (555) 000-0000',
-  address: '123 Studio Blvd, New York, NY 10001',
-  currency: 'USD',
-  taxRate: 0.075,
+  email: 'contact@mandapvisuals.com',
+  phone: '+977 980-0000000',
+  address: 'Kathmandu, Nepal',
+  currency: 'NPR',
+  currencySymbol: 'Rs.',
+  taxRate: 0,
   bankDetails: {
-    accountName: 'Your Studio LLC',
-    bankName: 'Chase Commercial Bank',
-    routingOrSwift: '123456789',
-    accountNumber: '••••••••1234',
+    accountName: 'Mandap Visuals',
+    bankName: 'Nabil Bank',
+    routingOrSwift: 'NABILNPK',
+    accountNumber: '••••••••5678',
   },
 };`}
                   </pre>
-                  <p className="text-slate-400 text-[11px]">
-                    <em>Note:</em> You can also change this directly without touching code by clicking <strong>Local DB &gt; Studio Name & Branding Settings</strong> in the top-right corner.
-                  </p>
                 </div>
 
                 <div className="rounded-xl border border-slate-800 bg-slate-950/60 p-4 space-y-2">

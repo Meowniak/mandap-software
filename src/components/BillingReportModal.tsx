@@ -6,11 +6,11 @@ import {
   CheckCircle2,
   Calendar,
   Building2,
-  DollarSign,
   Share2,
 } from 'lucide-react';
 import { BillingReport, Project, Client, StudioConfig, BillingReportStatus } from '../types';
 import { db } from '../services/db';
+import { formatCurrency } from '../utils/currency';
 
 interface BillingReportModalProps {
   report: BillingReport;
@@ -150,7 +150,7 @@ export const BillingReportModal: React.FC<BillingReportModalProps> = ({
               </div>
               {project && (
                 <div className="text-slate-500 font-mono text-[11px] mt-1">
-                  Fixed Contract Total: ${project.fixedBudget.toLocaleString()}
+                  Fixed Contract Total: {formatCurrency(project.fixedBudget)}
                 </div>
               )}
             </div>
@@ -177,10 +177,10 @@ export const BillingReportModal: React.FC<BillingReportModalProps> = ({
                       {item.quantity}
                     </td>
                     <td className="py-3.5 px-4 text-right font-mono text-slate-600 tabular-nums">
-                      ${item.unitPrice.toLocaleString()}
+                      {formatCurrency(item.unitPrice)}
                     </td>
                     <td className="py-3.5 pl-4 text-right font-mono font-semibold text-slate-900 tabular-nums">
-                      ${item.total.toLocaleString()}
+                      {formatCurrency(item.total)}
                     </td>
                   </tr>
                 ))}
@@ -206,21 +206,17 @@ export const BillingReportModal: React.FC<BillingReportModalProps> = ({
             {/* Calculations Box */}
             <div className="w-full sm:w-64 space-y-2 text-xs">
               <div className="flex justify-between text-slate-600">
-                <span>Milestone Subtotal</span>
-                <span className="font-mono text-slate-900 font-medium">${report.subtotal.toLocaleString()}</span>
-              </div>
-              <div className="flex justify-between text-slate-600">
-                <span>CA Media Tax ({(report.taxRate * 100).toFixed(1)}%)</span>
-                <span className="font-mono text-slate-900 font-medium">${report.taxAmount.toLocaleString()}</span>
+                <span>Milestone Total</span>
+                <span className="font-mono text-slate-900 font-medium">{formatCurrency(report.totalAmount)}</span>
               </div>
               <div className="border-t-2 border-slate-900 pt-2 flex justify-between text-base font-bold text-slate-900">
                 <span>Total Due</span>
-                <span className="font-mono">${report.totalAmount.toLocaleString()}</span>
+                <span className="font-mono">{formatCurrency(report.totalAmount)}</span>
               </div>
               {currentStatus === 'paid' && (
                 <div className="flex justify-between text-emerald-700 font-semibold text-xs pt-1">
                   <span>Paid in Full</span>
-                  <span className="font-mono">-${report.totalAmount.toLocaleString()}</span>
+                  <span className="font-mono">-{formatCurrency(report.totalAmount)}</span>
                 </div>
               )}
             </div>
